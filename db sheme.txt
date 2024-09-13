@@ -1,0 +1,64 @@
+Firestore Schema:
+1. Users Collection (For Login/Registration, Author Pages, and Profile Management)
+Each user is an author.
+
+Collection: users
+Document ID: Auto-generated user ID (same as Firebase Authentication UID)
+Fields:
+username: String (unique author username)
+email: String (author's email, auto-filled during registration)
+profileImage: String (URL to profile image, editable in profile page)
+bio: String (author's biography for the author page)
+createdAt: Timestamp (account creation time)
+updatedAt: Timestamp (for when profile is edited)
+socialLinks: Map (keys: social media platforms like Twitter, LinkedIn, GitHub; values: URLs)
+2. Posts Collection (For Creating and Displaying Blog Posts)
+This collection stores blog posts created by authors.
+
+Collection: posts
+Document ID: Auto-generated post ID
+Fields:
+authorId: String (reference to the user's UID in users collection)
+title: String (title of the blog post)
+content: String (full content of the blog post)
+summary: String (short description or excerpt of the post)
+coverImage: String (URL of the cover image)
+tags: Array of Strings (tags related to the post for categorization)
+createdAt: Timestamp (when the post was created)
+updatedAt: Timestamp (for editing the post)
+likes: Number (total number of likes on the post)
+comments: Subcollection (comments) (subcollection storing comments on the post)
+3. Comments Subcollection (Under Each Post Document)
+Stores comments related to a specific blog post.
+
+Subcollection: comments
+Document ID: Auto-generated comment ID
+Fields:
+authorId: String (reference to the user's UID in users collection)
+comment: String (content of the comment)
+createdAt: Timestamp (when the comment was made)
+4. Likes Subcollection (Optional for Like Functionality)
+To manage users who liked a blog post.
+
+Subcollection: likes
+Document ID: Author's UID (prevents the same user from liking a post multiple times)
+Fields:
+authorId: String (UID of the user who liked the post)
+likedAt: Timestamp (when the post was liked)
+5. Schema for Pages
+Blog Post Page:
+Purpose: Displays a list of blog posts.
+Data Source: Fetch from the posts collection.
+Fields to Display: title, summary, coverImage, createdAt, authorId (joined with the users collection to display the author’s name).
+Blog Post Detailed Page:
+Purpose: Displays a single blog post with all its details.
+Data Source: Fetch a single document from the posts collection by its ID.
+Fields to Display: title, content, coverImage, tags, createdAt, authorId (to display author information from users collection), and comments from the comments subcollection.
+Author Page:
+Purpose: Displays an author's profile and their blog posts.
+Data Source: Fetch the author's data from the users collection and the posts they’ve authored from the posts collection where authorId == userId.
+Fields to Display: username, profileImage, bio, socialLinks, and their list of blog posts.
+Edit Profile Page:
+Purpose: Allows the user to edit their profile (bio, profile image, and social links).
+Data Source: Fetch the user’s data from the users collection by their UID.
+Fields to Display/Update: username, profileImage, bio, socialLinks.
